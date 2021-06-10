@@ -20,4 +20,6 @@ def Modified_bubbleSort(array):
                 if flag==True:
                     break
     return array
+
+print(bubbleSort(data))
 print(Modified_bubbleSort(data))

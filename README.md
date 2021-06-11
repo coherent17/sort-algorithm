@@ -35,9 +35,9 @@ Find constant $c$ and $n_0$: $(n_0,c)=(0,10)$
 *    回溯法
 
 ## 排序演算法
-*    氣泡排序法(bubblesort)
+*    氣泡排序法(bubble sort)
 *    選擇排序法(selection sort)
-*    插入排序法(insert sort)
+*    插入排序法(insertion sort)
 *    謝耳排序法
 *    合併排序法
 *    快速排序法
@@ -45,14 +45,15 @@ Find constant $c$ and $n_0$: $(n_0,c)=(0,10)$
 ### **氣泡排序法(Bubble Sort)**
 #### 從第一個元素開始，比較相鄰元素大小，如果順序有誤，則對調再進行下一個元素的比較。掃描過一次後就可以確保最後一個元素是位於正確的位置。接著再進行第二次掃描，直到所有元素完成排序為止。
 ![image alt](https://miro.medium.com/max/901/1*PlGu04ObXCSpTvJOZTOYIw.png)
+![image alt](https://i1.wp.com/stackabuse.s3.amazonaws.com/media/bubble-sort-in-java-1.gif)
 #### 時間複雜度:
 *    Best Case: $O(n)$  
     當資料的順序恰好由小到大時，第一次掃描後，沒有進行任何swap $\Rightarrow$ 提前結束
 *    Worst Case: $O(n^2)$  
     當資料的順序恰好為由大到小時，每回合分別執行:$n-1、n-2、...、1$次
-    因此$(n-1)+(n-2)+...+1=n(n-1)/2$ $\Rightarrow$ $O(n^2)$
+    因此$(n-1)+(n-2)+...+1=n\cdot\frac{(n-1)}{2}$ $\Rightarrow$ $O(n^2)$
 *    Average Case: $O(n^2)$  
-    每個數字要執行的次數為$1、2、3、...、n-1$，因此每個數字平均的執行次數是$(1+2+3+...+(n-1))/n-1=n/2$，有$n$個數字，所以所需平均時間為$n*(n/2)=n^2/2$ $\Rightarrow$ $O(n^2)$
+    每個數字要執行的次數為$0、1、2、3、...、n-1$，因此每個數字平均的執行次數是$\frac{0+1+2+3+...+(n-1)}{n}=\frac{(n-1)}{2}$，有$n$個數字，所以所需平均時間為$n\cdot\frac{(n-1)}{2}=\frac{(n^2-n)}{2}$ $\Rightarrow$ $O(n^2)$
     
 #### 空間複雜度:
 *   不需要額外的陣列去存資料，因此為$\theta(1)$ 
@@ -90,14 +91,15 @@ code:https://github.com/coherent17/algorithm/blob/main/sorting/bubblesort.py
 ### **選擇排序法(Selection Sort)**
 #### 將資料分成已排序及未排序兩部分，依序在未排序中找最小值，加入到已排序部分的末端。按照這個方式，可以在第一輪中找到最小的，第二輪找到第二小的。那要如何從未排序的數列中找到最小值呢?可以先設未排序陣列的第一個數字是目前的最小值，然後再往後一個一個比大小，如果後面的數字比目前的最小值小，那就將目前的最小值換為這個數。
 ![image alt](https://miro.medium.com/max/700/1*MUEvL8qTjbRtz22PlTSXPA.jpeg)
+![image alt](http://www.codingconnect.net/wp-content/uploads/2016/09/Selection-Sort.gif)
 #### 時間複雜度:
 分成兩個步驟討論:
 *    從未排序陣列中取得最小值:  
-##### 在n個未排序數列中找到最小值需要$n$個步驟，因此對於selection sort而言，第一回合要從$n$個未排序數列中找到最小值需要$n$個步驟，第二回合要從$n-1$個未排序數列中找到最小值需要$n-1$個步驟，一直到最後一個回合需要一個步驟為止。因此總步驟數為$(n+(n-1)+(n-2)+...+1)$$=n*(n+1)/2$。
+        ##### 在n個未排序數列中找到最小值需要$n$個步驟，因此對於selection sort而言，第一回合要從$n$個未排序數列中找到最小值需要$n$個步驟，第二回合要從$n-1$個未排序數列中找到最小值需要$n-1$個步驟，一直到最後一個回合需要一個步驟為止。因此總步驟數為$(n+(n-1)+(n-2)+...+1)=\frac{n\cdot(n+1)}{2}$。
 *    移到已排序陣列末端:  
-##### 每次找到最小的數值，將其與未排序好的第一個數字交換位置，每一個回合需要一個步驟，總共執行$n$個回合，需要$n$個步驟。
+        ##### 每次找到最小的數值，將其與未排序好的第一個數字交換位置，每一個回合需要一個步驟，總共執行$n$個回合，需要$n$個步驟。
 
-因此selection sort共需要$=(n*(n+1)/2)+n=(n*(n+3)/2)$ $\Rightarrow$ $O(n^2)$
+因此selection sort共需要$\frac{n\cdot(n+1)}{2}+n=\frac{n\cdot(n+3)}{2}$ $\Rightarrow$ $O(n^2)$
 
 #### 空間複雜度:
 *    不需要額外的陣列去存資料，因此為$\theta(1)$ 
@@ -116,6 +118,4 @@ def selectionSort(array):
     return array
 ```
 code:https://github.com/coherent17/algorithm/blob/main/sorting/selection_sort.py
-
-
-### **插入排序法(Insert Sort)**
+### **插入排序法(Insertion Sort)**

@@ -37,12 +37,12 @@ Find constant $c$ and $n_0$: $(n_0,c)=(0,10)$
 ## 排序演算法
 *    氣泡排序法(bubblesort)
 *    選擇排序法(selection sort)
-*    插入排序法
+*    插入排序法(insert sort)
 *    謝耳排序法
 *    合併排序法
 *    快速排序法
 *    基數排序法
-### **氣泡排序法**
+### **氣泡排序法(Bubble Sort)**
 #### 從第一個元素開始，比較相鄰元素大小，如果順序有誤，則對調再進行下一個元素的比較。掃描過一次後就可以確保最後一個元素是位於正確的位置。接著再進行第二次掃描，直到所有元素完成排序為止。
 ![image alt](https://miro.medium.com/max/901/1*PlGu04ObXCSpTvJOZTOYIw.png)
 #### 時間複雜度:
@@ -87,6 +87,35 @@ def Modified_bubbleSort(array):
 code:https://github.com/coherent17/algorithm/blob/main/sorting/bubblesort.py
   
   
-### **選擇排序法**
-#### 將資料分成已排序及未排序兩部分，依序將未排序中找最小值(或最大值)，加入到已排序部分的末端
-![image alt](https://www.w3resource.com/w3r_images/selection-short.png)
+### **選擇排序法(Selection Sort)**
+#### 將資料分成已排序及未排序兩部分，依序在未排序中找最小值，加入到已排序部分的末端。按照這個方式，可以在第一輪中找到最小的，第二輪找到第二小的。那要如何從未排序的數列中找到最小值呢?可以先設未排序陣列的第一個數字是目前的最小值，然後再往後一個一個比大小，如果後面的數字比目前的最小值小，那就將目前的最小值換為這個數。
+![image alt](https://miro.medium.com/max/700/1*MUEvL8qTjbRtz22PlTSXPA.jpeg)
+#### 時間複雜度:
+分成兩個步驟討論:
+*    從未排序陣列中取得最小值:  
+##### 在n個未排序數列中找到最小值需要$n$個步驟，因此對於selection sort而言，第一回合要從$n$個未排序數列中找到最小值需要$n$個步驟，第二回合要從$n-1$個未排序數列中找到最小值需要$n-1$個步驟，一直到最後一個回合需要一個步驟為止。因此總步驟數為$(n+(n-1)+(n-2)+...+1)$$=n*(n+1)/2$。
+*    移到已排序陣列末端:  
+##### 每次找到最小的數值，將其與未排序好的第一個數字交換位置，每一個回合需要一個步驟，總共執行$n$個回合，需要$n$個步驟。
+
+因此selection sort共需要$=(n*(n+1)/2)+n=(n*(n+3)/2)$ $\Rightarrow$ $O(n^2)$
+
+#### 空間複雜度:
+*    不需要額外的陣列去存資料，因此為$\theta(1)$ 
+#### python code:
+```python=
+def selectionSort(array):
+    for i in range(len(array)-1):
+        #設未排序陣列中的第一個元素為最小的
+        min_index=i
+        for j in range(i+1,len(array)):
+            #找到未排序中最小元素的index
+            if array[min_index]>array[j]:
+                min_index=j
+        #將最小的數字放到已排序數列中的最後面
+        array[i],array[min_index]=array[min_index],array[i]
+    return array
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/selection_sort.py
+
+
+### **插入排序法(Insert Sort)**

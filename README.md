@@ -25,21 +25,13 @@ Find constant $c$ and $n_0$: $(n_0,c)=(0,10)$
 
 ![time complexity chart](https://i.imgur.com/7lT5DLp.png)
 
-### 常見的演算法簡介
-*    分治法(Divide and conquer)
-*    遞迴法(Recursion)
-*    貪心法(Greed method)
-*    動態規劃法(Dynamic Programming Algorithm, DPA)
-*    疊代法(Iterative method)
-*    枚舉法
-*    回溯法
 
 ## 排序演算法
 *    氣泡排序法(bubble sort)
 *    選擇排序法(selection sort)
 *    插入排序法(insertion sort)
 *    希爾排序法(shell sort)
-*    合併排序法
+*    合併排序法(merge sort)
 *    快速排序法
 *    基數排序法
 ### **氣泡排序法(Bubble Sort)**
@@ -165,7 +157,7 @@ code:https://github.com/coherent17/algorithm/blob/main/sorting/insertion_sort.py
                 | 0                  | 1   | 2   | 3   | 4   | 5                 | 6   | 7   | 8   | 9   | 10                | 11  | 12  | 13  | 14  |
                 | ------------------ |:--- |:--- | --- | --- |:----------------- | --- | --- |:--- |:--- | ----------------- | --- | --- | --- |:--- |
                 | $\color{red} {45}$ | 84  | 77  | 83  | 55  | $\color{red}{49}$ | 91  | 64  | 91  | 5   | $\color{red}{37}$ | 31  | 70  | 38  | 51  |
-                排序後:  
+        *    排序後:  
                 | 0                  | 1   | 2   | 3   | 4   | 5                 | 6   | 7   | 8   | 9   | 10                | 11  | 12  | 13  | 14  |
                 | ------------------ |:--- |:--- | --- | --- |:----------------- | --- | --- |:--- |:--- | ----------------- | --- | --- | --- |:--- |
                 | $\color{red} {37}$ | 84  | 77  | 83  | 55  | $\color{red}{45}$ | 91  | 64  | 91  | 5   | $\color{red}{49}$ | 31  | 70  | 38  | 51  |
@@ -185,11 +177,11 @@ code:https://github.com/coherent17/algorithm/blob/main/sorting/insertion_sort.py
                 | 0                 | 1                  | 2                 | 3                  | 4                | 5                  | 6                 | 7                  | 8                 | 9                  | 10                | 11                 | 12                | 13                 |        14         |
                 | ----------------- | ------------------ |:----------------- | ------------------ | ---------------- |:------------------ | ----------------- | ------------------ |:----------------- |:------------------ | ----------------- | ------------------ | ----------------- | ------------------ |:-----------------:|
                 | $\color{red}{37}$ | $\color{blue}{31}$ | $\color{red}{64}$ | $\color{blue}{38}$ | $\color{red}{5}$ | $\color{blue}{45}$ | $\color{red}{84}$ | $\color{blue}{70}$ | $\color{red}{83}$ | $\color{blue}{51}$ | $\color{red}{49}$ | $\color{blue}{91}$ | $\color{red}{77}$ | $\color{blue}{91}$ | $\color{red}{55}$ |
-                排序後:  
+        *    排序後:  
                 | 0                 | 1                  | 2                 | 3                  | 4                | 5                  | 6                 | 7                  | 8                 | 9                  | 10                | 11                 | 12                | 13                 |        14         |
                 | ----------------- | ------------------ |:----------------- | ------------------ | ---------------- |:------------------ | ----------------- | ------------------ |:----------------- |:------------------ | ----------------- | ------------------ | ----------------- | ------------------ |:-----------------:|
                 | $\color{red}{5}$ | $\color{blue}{31}$ | $\color{red}{37}$ | $\color{blue}{38}$ | $\color{red}{49}$ | $\color{blue}{45}$ | $\color{red}{55}$ | $\color{blue}{51}$ | $\color{red}{64}$ | $\color{blue}{70}$ | $\color{red}{77}$ | $\color{blue}{91}$ | $\color{red}{83}$ | $\color{blue}{91}$ | $\color{red}{84}$ |  
-                可以看出顏色相同的數組已經被由小到大排序好了，此外，也可以看到較小的數字已經都在左側，而較大的數字也都已經移到右側了，已經變成一個快要完全排序完成的數列了，此時我們可以進行$gap=1$的排序，其實也就是前面所介紹的insertion sort，在這種快要排序好的數列中，insertion sort的效能會是很高的。
+        可以看出顏色相同的數組已經被由小到大排序好了，此外，也可以看到較小的數字已經都在左側，而較大的數字也都已經移到右側了，已經變成一個快要完全排序完成的數列了，此時我們可以進行$gap=1$的排序，其實也就是前面所介紹的insertion sort，在這種快要排序好的數列中，insertion sort的效能會是很高的。
                        
 *    第三回合: $gap=1$，其實就是前面所說的insertion sort，只不過這邊不分組，是將所有數列一起做一次insertion sort，便可以得到最終排序好的數列。  
         *    排序後:
@@ -201,4 +193,27 @@ code:https://github.com/coherent17/algorithm/blob/main/sorting/insertion_sort.py
 
 **好懂的示意影片**:{%youtube CmPA7zE8mx0 %}
 #### 時間複雜度:
-*    Best Case: $O(n)$  
+*    依step的不同而有不同的時間複雜度，但是仍快於insertion sort
+#### python code:
+```python=
+data=[45,84,77,83,55,49,91,64,91,5,37,31,70,38,51]
+#define the gap by yourself
+gap=[5,2,1]
+
+def shell_sort(array,gap):
+    n=len(array)
+    #start gapped insertion sort
+    for current_gap in gap:
+        for i in range(current_gap,n):
+            #temp: the insertion number
+            temp=array[i]
+            j=i
+            #if the unsorted array is bigger than insertion number, then shift right 
+            while j>=0 and j-current_gap>=0 and array[j-current_gap]>temp:
+                array[j]=array[j-current_gap]
+                j-=current_gap
+            #insert the insertion number
+            array[j]=temp
+    return array
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/shell_sort.py

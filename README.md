@@ -217,3 +217,78 @@ def shell_sort(array,gap):
     return array
 ```
 code:https://github.com/coherent17/algorithm/blob/main/sorting/shell_sort.py
+
+### **合併排序法(Merge Sort)**
+#### 合併排序法大致上可以分為切分與排序
+*    切分:  
+        *    1.將原陣列切一半成兩個子陣列
+        *    2.將切好的子陣列再切一半
+        *    3.重複第2步直到所有子陣列只包含一個元素
+*    排序:  
+        *    1.排序兩個只剩一個元素並合併為一個陣列
+        *    2.將兩邊排序好的陣列再合併為一個陣列
+        *    3.重複2直到所有陣列合併為一個大陣列
+
+#### 舉例說明:  
+*    ![image alt](https://miro.medium.com/max/600/1*opwN0BhtH4zvPF697fPlow.gif)  
+*    因為兩個子陣列在合併前是已經排序好的狀態，因此在合併兩個已排序吼的陣列，我們僅需持續比較最前面最小的部分，再將較小的丟到新的大陣列即可，便可以完成排序。
+
+#### 時間複雜度:
+*    切分:
+        *    將一個長度為$n$的陣列切為每個子陣列長度為1需要$n-1$個步驟
+*    合併&排序:
+        *    將兩個排序好的子陣列(長度和為$n$)合併為排序好的大陣列需要$n$個步驟(兩個子陣列的最前的元素來比較)，那在merge sort中需要執行幾次這樣的合併步驟呢?假設一開始有8個子陣列合併成4個，再合併為2個，最後合併為一個，因此需要執行$log_2n$次，因此再合併與排序的步驟數為$nlog_2n$
+*    結合切分與合併:
+        *    合併的總步驟數為$(n-1)+(nlog_2n)$，因此merge sort的時間複雜度為$O(nlog_2n)$
+
+#### 空間複雜度:
+*    假設原未排序的陣列長度為$n$，需要額外的$n$長度的陣列來儲存已排序的陣列，引此空間複雜度為$\theta(n)$
+
+#### python code(divide and conquer):
+*    1.申請空間，使其大小為兩個已經排序序列之和，該空間用來存放合併後的序列
+*    2.設定兩個指標，最初位置分別為兩個已經排序序列的起始位置
+*    3.比較兩個指標所指向的元素，選擇相對小的元素放入到合併空間，並移動指標到下一位置
+*    4.重複步驟3直到某一指標到達序列尾
+*    5.將另一序列剩下的所有元素直接複製到合併序列尾
+```python=
+def merge_sort(array):
+    if len(array)>1:
+        #find the division point
+        mid=len(array)//2
+        left_array=array[:mid]
+        right_array=array[mid:]
+
+        #use recursion to keep dividing
+        merge_sort(left_array)
+        merge_sort(right_array)
+
+        #initialize the comparison index
+        right_index=0
+        left_index=0
+        merge_index=0
+
+        #start comparing
+        #case 1: right array compare with left array
+        while right_index<len(right_array) and left_index<len(left_array):
+            if right_array[right_index]<left_array[left_index]:
+                array[merge_index]=right_array[right_index]
+                right_index+=1
+            else:
+                array[merge_index]=left_array[left_index]
+                left_index+=1
+            merge_index+=1
+        
+        #case 2: right array compare with itself
+        while right_index<len(right_array):
+            array[merge_index]=right_array[right_index]
+            right_index+=1
+            merge_index+=1
+        
+        #case 3: left array compare with itself
+        while left_index<len(left_array):
+            array[merge_index]=left_array[left_index]
+            left_index+=1
+            merge_index+=1
+    return array
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/merge_sort.py

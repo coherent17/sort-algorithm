@@ -7,6 +7,7 @@ def merge_sort(array):
         left_array=array[:mid]
         right_array=array[mid:]
 
+        print(left_array,right_array)
         #use recursion to keep dividing
         merge_sort(left_array)
         merge_sort(right_array)
@@ -16,6 +17,7 @@ def merge_sort(array):
         left_index=0
         merge_index=0
 
+        print(left_array)
         #start comparing
         #case 1: right array compare with left array
         while right_index<len(right_array) and left_index<len(left_array):
@@ -40,4 +42,4 @@ def merge_sort(array):
             merge_index+=1
     return array
 
-print(merge_sort(data))
+d=merge_sort(data)

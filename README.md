@@ -195,6 +195,57 @@ def selectionSort(array):
     return array
 ```
 code:https://github.com/coherent17/algorithm/blob/main/sorting/selection_sort.py
+
+#### C code:
+```c=
+#include <stdio.h>
+#define SIZE 8
+
+void selectionSort(int *);
+void printArray(int *);
+
+int main(){
+	int data[SIZE]={16,25,39,27,12,8,45,63};
+	selectionSort(data);
+	printArray(data);
+	return 0;
+}
+
+void selectionSort(int *array){
+	void swap(int *,int *);
+	int i,j,min_index;
+	for(i=0;i<SIZE-1;i++){
+		//initiaize the index of the unsorted array
+		min_index=i;
+		
+		//find the smallest nuber in the unsorted array
+		for(j=i+1;j<SIZE;j++){
+			if(array[min_index]>array[j]){
+				min_index=j;
+			}
+		}
+		
+		//put the smallest number into the last of the sorted array
+		swap(&array[min_index],&array[i]);
+	}
+}
+
+void swap(int *a, int *b){
+	int temp;
+	temp=*a;
+	*a=*b;
+	*b=temp;
+}
+
+void printArray(int *array){
+	int i;
+	for(i=0;i<SIZE;i++){
+		printf("%d ",array[i]);
+	}
+}
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/selectionsort.c
+
 ### **插入排序法(Insertion Sort)**
 #### 想像手上又一副撲克牌，想要將其由小到大排序。可以將第$i$張牌加入前$i-1$張以排序過的牌，那就可以獲得$i$張排序過的牌組了。
 ![image alt](https://www.w3resource.com/w3r_images/insertion-sort.png)

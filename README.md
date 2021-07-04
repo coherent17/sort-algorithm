@@ -60,6 +60,47 @@ def bubbleSort(array):
     return array
 ```
 code:https://github.com/coherent17/algorithm/blob/main/sorting/bubblesort.py
+#### C code:
+```c=
+#include <stdio.h>
+#define SIZE 8
+
+void bubbleSort(int *);
+void printArray(int *);
+int main(){
+	int data[SIZE]={16,25,39,27,12,8,45,63};
+	bubbleSort(data);
+	printArray(data);
+	return 0;
+}
+
+void bubbleSort(int *array){
+	void swap(int *, int *);
+	int i,j;
+	for(i=0;i<SIZE-1;i++){
+		for(j=0;j<SIZE-1-i;j++){
+			if (array[j]>array[j+1]){
+				swap(&array[j],&array[j+1]);
+			}
+		}
+	}
+} 
+
+void swap(int *a, int *b){
+	int temp;
+	temp=*a;
+	*a=*b;
+	*b=temp;
+}
+
+void printArray(int *array){
+	int i;
+	for(i=0;i<SIZE;i++){
+		printf("%d ",array[i]);
+	}
+}
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/bubblesort.c
 #### 改良Bubble Sort (Modified Bubble Sort)
 Bubble Sort的時間複雜度只有在給定的陣列為從小到大排序好的情形才會是$O(n)$，其餘情況階是維持$O(n^2)$。因此我們使用一個flag變數去停止bubble sort當陣列已經被排序好了。 初始化flag為True，當有元素進行交換時，flag改為False，當進行完整個迴圈後，若flag還是維持True，則表示該陣列已經被排序好了，便可以停止bubble sort了。
 #### python code:
@@ -78,8 +119,52 @@ def Modified_bubbleSort(array):
     return array
 ```
 code:https://github.com/coherent17/algorithm/blob/main/sorting/bubblesort.py
-  
-  
+ 
+#### C code:
+```c=
+#include <stdio.h>
+#define SIZE 8
+
+void Modified_bubbleSort(int *);
+void printArray(int *);
+
+int main(){
+	int data[SIZE]={16,25,39,27,12,8,45,63};
+	Modified_bubbleSort(data);
+	printArray(data);
+	return 0;
+}
+
+void Modified_bubbleSort(int *array){
+	void swap(int *, int *);
+	int i,j,flag;
+	for(i=0;i<SIZE-1;i++){
+		flag=1;
+		for(j=0;j<SIZE-1-i;j++){
+			if(array[j]>array[j+1]){
+				swap(&array[j],&array[j+1]);
+				flag=0;
+				if(flag) break;
+			}
+		}
+	}
+}
+
+void swap(int *a, int *b){
+	int temp;
+	temp=*a;
+	*a=*b;
+	*b=temp;
+}
+
+void printArray(int *array){
+	int i;
+	for(i=0;i<SIZE;i++){
+		printf("%d ",array[i]);
+	}
+}
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/bubblesort.c
 ### **選擇排序法(Selection Sort)**
 #### 將資料分成已排序及未排序兩部分，依序在未排序中找最小值，加入到已排序部分的末端。按照這個方式，可以在第一輪中找到最小的，第二輪找到第二小的。那要如何從未排序的數列中找到最小值呢?可以先設未排序陣列的第一個數字是目前的最小值，然後再往後一個一個比大小，如果後面的數字比目前的最小值小，那就將目前的最小值換為這個數。
 ![image alt](https://miro.medium.com/max/700/1*MUEvL8qTjbRtz22PlTSXPA.jpeg)

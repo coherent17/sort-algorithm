@@ -25,21 +25,13 @@ Find constant $c$ and $n_0$: $(n_0,c)=(0,10)$
 
 ![time complexity chart](https://i.imgur.com/7lT5DLp.png)
 
-### 常見的演算法簡介
-*    分治法(Divide and conquer)
-*    遞迴法(Recursion)
-*    貪心法(Greed method)
-*    動態規劃法(Dynamic Programming Algorithm, DPA)
-*    疊代法(Iterative method)
-*    枚舉法
-*    回溯法
 
 ## 排序演算法
 *    氣泡排序法(bubble sort)
 *    選擇排序法(selection sort)
 *    插入排序法(insertion sort)
-*    謝耳排序法
-*    合併排序法
+*    希爾排序法(shell sort)
+*    合併排序法(merge sort)
 *    快速排序法
 *    基數排序法
 ### **氣泡排序法(Bubble Sort)**
@@ -68,6 +60,47 @@ def bubbleSort(array):
     return array
 ```
 code:https://github.com/coherent17/algorithm/blob/main/sorting/bubblesort.py
+#### C code:
+```c=
+#include <stdio.h>
+#define SIZE 8
+
+void bubbleSort(int *);
+void printArray(int *);
+int main(){
+	int data[SIZE]={16,25,39,27,12,8,45,63};
+	bubbleSort(data);
+	printArray(data);
+	return 0;
+}
+
+void bubbleSort(int *array){
+	void swap(int *, int *);
+	int i,j;
+	for(i=0;i<SIZE-1;i++){
+		for(j=0;j<SIZE-1-i;j++){
+			if (array[j]>array[j+1]){
+				swap(&array[j],&array[j+1]);
+			}
+		}
+	}
+} 
+
+void swap(int *a, int *b){
+	int temp;
+	temp=*a;
+	*a=*b;
+	*b=temp;
+}
+
+void printArray(int *array){
+	int i;
+	for(i=0;i<SIZE;i++){
+		printf("%d ",array[i]);
+	}
+}
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/bubblesort.c
 #### 改良Bubble Sort (Modified Bubble Sort)
 Bubble Sort的時間複雜度只有在給定的陣列為從小到大排序好的情形才會是$O(n)$，其餘情況階是維持$O(n^2)$。因此我們使用一個flag變數去停止bubble sort當陣列已經被排序好了。 初始化flag為True，當有元素進行交換時，flag改為False，當進行完整個迴圈後，若flag還是維持True，則表示該陣列已經被排序好了，便可以停止bubble sort了。
 #### python code:
@@ -86,8 +119,52 @@ def Modified_bubbleSort(array):
     return array
 ```
 code:https://github.com/coherent17/algorithm/blob/main/sorting/bubblesort.py
-  
-  
+ 
+#### C code:
+```c=
+#include <stdio.h>
+#define SIZE 8
+
+void Modified_bubbleSort(int *);
+void printArray(int *);
+
+int main(){
+	int data[SIZE]={16,25,39,27,12,8,45,63};
+	Modified_bubbleSort(data);
+	printArray(data);
+	return 0;
+}
+
+void Modified_bubbleSort(int *array){
+	void swap(int *, int *);
+	int i,j,flag;
+	for(i=0;i<SIZE-1;i++){
+		flag=1;
+		for(j=0;j<SIZE-1-i;j++){
+			if(array[j]>array[j+1]){
+				swap(&array[j],&array[j+1]);
+				flag=0;
+				if(flag) break;
+			}
+		}
+	}
+}
+
+void swap(int *a, int *b){
+	int temp;
+	temp=*a;
+	*a=*b;
+	*b=temp;
+}
+
+void printArray(int *array){
+	int i;
+	for(i=0;i<SIZE;i++){
+		printf("%d ",array[i]);
+	}
+}
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/bubblesort.c
 ### **選擇排序法(Selection Sort)**
 #### 將資料分成已排序及未排序兩部分，依序在未排序中找最小值，加入到已排序部分的末端。按照這個方式，可以在第一輪中找到最小的，第二輪找到第二小的。那要如何從未排序的數列中找到最小值呢?可以先設未排序陣列的第一個數字是目前的最小值，然後再往後一個一個比大小，如果後面的數字比目前的最小值小，那就將目前的最小值換為這個數。
 ![image alt](https://miro.medium.com/max/700/1*MUEvL8qTjbRtz22PlTSXPA.jpeg)
@@ -152,3 +229,151 @@ code:https://github.com/coherent17/algorithm/blob/main/sorting/insertion_sort.py
 *    當$i=3\cap j=2、1、0$時，將$6$這張牌抽出，發現前面的人都比他小，因此不會進入到$while$的迴圈中，維持在原位。此時數列仍然維持$array=[2,4,5,6,1,3]$不變。
 *    當$i=4\cap j=3、2、1、0$時，可以發現$1$都比前面的數字還要小，因此將前面的數字依序往後挪一格，再將$1$插入空位，此時數列會變成$array=[1,2,4,5,6,3]$
 *    當$i=5\cap j=4、3、2$時，將$3$這張牌抽出，按照前面的規則可以知道將其插入在數字$2$及數字$4$之間，那做到這邊我們就完成我們的排序了，此時數列會變成$array=[1,2,3,4,5,6]$
+### **希爾排序法(Shell Sort)**
+#### 為進化版的插入排序法，改良insertion sort中每次只能將資料移動一位的缺點，因此能夠使原本距離較遠的數字快速歸位。添加了間距(gap)的觀念，往左邊間距gap的數字比大小，可讓在陣列後端數值較小的數字較快回到陣列前端。
+
+#### 舉例說明:有$15$筆資料，取$gap$分別為$5、2、1$
+| 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 10  | 11  | 12  | 13  | 14  |
+| --- | --- |:--- | --- | --- |:--- | --- | --- |:--- |:--- | --- | --- | --- | --- |:--- |
+| 45  | 84  | 77  | 83  | 55  | 49  | 91  | 64  | 91  | 5   | 37  | 31  | 70  | 38  | 51  |
+*    第一回合: $gap=5$
+        *    對$index$為$0、5、10$做insertion sort  
+                Example:
+                | 0                  | 1   | 2   | 3   | 4   | 5                 | 6   | 7   | 8   | 9   | 10                | 11  | 12  | 13  | 14  |
+                | ------------------ |:--- |:--- | --- | --- |:----------------- | --- | --- |:--- |:--- | ----------------- | --- | --- | --- |:--- |
+                | $\color{red} {45}$ | 84  | 77  | 83  | 55  | $\color{red}{49}$ | 91  | 64  | 91  | 5   | $\color{red}{37}$ | 31  | 70  | 38  | 51  |
+        *    排序後:  
+                | 0                  | 1   | 2   | 3   | 4   | 5                 | 6   | 7   | 8   | 9   | 10                | 11  | 12  | 13  | 14  |
+                | ------------------ |:--- |:--- | --- | --- |:----------------- | --- | --- |:--- |:--- | ----------------- | --- | --- | --- |:--- |
+                | $\color{red} {37}$ | 84  | 77  | 83  | 55  | $\color{red}{45}$ | 91  | 64  | 91  | 5   | $\color{red}{49}$ | 31  | 70  | 38  | 51  |
+                
+        *    對$index$為$1、6、11$做insertion sort
+        *    對$index$為$2、7、12$做insertion sort
+        *    對$index$為$3、8、13$做insertion sort
+        *    對$index$為$4、9、14$做insertion sort  
+        
+        經過上面$gap=5$的insertion sort後可以發現顏色相同的數組已經按照順序排好了。
+        | 0                 | 1                  |          2          | 3                     |         4          |         5         | 6                  |          7          |           8           | 9                   |        10         | 11                 | 12                  | 13                    | 14                  |
+        | ----------------- |:------------------ |:-------------------:| --------------------- |:------------------:|:-----------------:| ------------------ |:-------------------:|:---------------------:|:------------------- |:-----------------:| ------------------ | ------------------- | --------------------- |:------------------- |
+        | $\color{red}{37}$ | $\color{blue}{31}$ | $\color{green}{64}$ | $\color{magenta}{38}$ | $\color{Brown}{5}$ | $\color{red}{45}$ | $\color{blue}{84}$ | $\color{green}{70}$ | $\color{magenta}{83}$ | $\color{Brown}{51}$ | $\color{red}{49}$ | $\color{blue}{91}$ | $\color{green}{77}$ | $\color{magenta}{91}$ | $\color{Brown}{55}$ |
+        
+*    第二回合: $gap=2$
+        *    將$gap$減至$2$，分成兩組進行insertion sort:  
+                | 0                 | 1                  | 2                 | 3                  | 4                | 5                  | 6                 | 7                  | 8                 | 9                  | 10                | 11                 | 12                | 13                 |        14         |
+                | ----------------- | ------------------ |:----------------- | ------------------ | ---------------- |:------------------ | ----------------- | ------------------ |:----------------- |:------------------ | ----------------- | ------------------ | ----------------- | ------------------ |:-----------------:|
+                | $\color{red}{37}$ | $\color{blue}{31}$ | $\color{red}{64}$ | $\color{blue}{38}$ | $\color{red}{5}$ | $\color{blue}{45}$ | $\color{red}{84}$ | $\color{blue}{70}$ | $\color{red}{83}$ | $\color{blue}{51}$ | $\color{red}{49}$ | $\color{blue}{91}$ | $\color{red}{77}$ | $\color{blue}{91}$ | $\color{red}{55}$ |
+        *    排序後:  
+                | 0                 | 1                  | 2                 | 3                  | 4                | 5                  | 6                 | 7                  | 8                 | 9                  | 10                | 11                 | 12                | 13                 |        14         |
+                | ----------------- | ------------------ |:----------------- | ------------------ | ---------------- |:------------------ | ----------------- | ------------------ |:----------------- |:------------------ | ----------------- | ------------------ | ----------------- | ------------------ |:-----------------:|
+                | $\color{red}{5}$ | $\color{blue}{31}$ | $\color{red}{37}$ | $\color{blue}{38}$ | $\color{red}{49}$ | $\color{blue}{45}$ | $\color{red}{55}$ | $\color{blue}{51}$ | $\color{red}{64}$ | $\color{blue}{70}$ | $\color{red}{77}$ | $\color{blue}{91}$ | $\color{red}{83}$ | $\color{blue}{91}$ | $\color{red}{84}$ |  
+        可以看出顏色相同的數組已經被由小到大排序好了，此外，也可以看到較小的數字已經都在左側，而較大的數字也都已經移到右側了，已經變成一個快要完全排序完成的數列了，此時我們可以進行$gap=1$的排序，其實也就是前面所介紹的insertion sort，在這種快要排序好的數列中，insertion sort的效能會是很高的。
+                       
+*    第三回合: $gap=1$，其實就是前面所說的insertion sort，只不過這邊不分組，是將所有數列一起做一次insertion sort，便可以得到最終排序好的數列。  
+        *    排序後:
+                | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 10  | 11  | 12  | 13  | 14  |
+                | --- | --- |:--- | --- | --- |:--- | --- | --- |:--- |:--- | --- | --- |:---:| --- |:--- |
+                | 5   | 31  | 37  | 38  | 45  | 49  | 51  | 55  | 64  | 70  | 77  | 83  | 84  | 91  | 91  |
+
+![image alt](https://img-blog.csdnimg.cn/2021011217372654.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzUxMjgzODU2,size_16,color_FFFFFF,t_70)
+
+**好懂的示意影片**:{%youtube CmPA7zE8mx0 %}
+#### 時間複雜度:
+*    依step的不同而有不同的時間複雜度，但是仍快於insertion sort
+#### python code:
+```python=
+data=[45,84,77,83,55,49,91,64,91,5,37,31,70,38,51]
+#define the gap by yourself
+gap=[5,2,1]
+
+def shell_sort(array,gap):
+    n=len(array)
+    #start gapped insertion sort
+    for current_gap in gap:
+        for i in range(current_gap,n):
+            #temp: the insertion number
+            temp=array[i]
+            j=i
+            #if the unsorted array is bigger than insertion number, then shift right 
+            while j>=0 and j-current_gap>=0 and array[j-current_gap]>temp:
+                array[j]=array[j-current_gap]
+                j-=current_gap
+            #insert the insertion number
+            array[j]=temp
+    return array
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/shell_sort.py
+
+### **合併排序法(Merge Sort)**
+#### 合併排序法大致上可以分為切分與排序
+*    切分:  
+        *    1.將原陣列切一半成兩個子陣列
+        *    2.將切好的子陣列再切一半
+        *    3.重複第2步直到所有子陣列只包含一個元素
+*    排序:  
+        *    1.排序兩個只剩一個元素並合併為一個陣列
+        *    2.將兩邊排序好的陣列再合併為一個陣列
+        *    3.重複2直到所有陣列合併為一個大陣列
+
+#### 舉例說明:  
+*    ![image alt](https://miro.medium.com/max/600/1*opwN0BhtH4zvPF697fPlow.gif)  
+*    因為兩個子陣列在合併前是已經排序好的狀態，因此在合併兩個已排序吼的陣列，我們僅需持續比較最前面最小的部分，再將較小的丟到新的大陣列即可，便可以完成排序。
+
+#### 時間複雜度:
+*    切分:
+        *    將一個長度為$n$的陣列切為每個子陣列長度為1需要$n-1$個步驟
+*    合併&排序:
+        *    將兩個排序好的子陣列(長度和為$n$)合併為排序好的大陣列需要$n$個步驟(兩個子陣列的最前的元素來比較)，那在merge sort中需要執行幾次這樣的合併步驟呢?假設一開始有8個子陣列合併成4個，再合併為2個，最後合併為一個，因此需要執行$log_2n$次，因此再合併與排序的步驟數為$nlog_2n$
+*    結合切分與合併:
+        *    合併的總步驟數為$(n-1)+(nlog_2n)$，因此merge sort的時間複雜度為$O(nlog_2n)$
+
+#### 空間複雜度:
+*    假設原未排序的陣列長度為$n$，需要額外的$n$長度的陣列來儲存已排序的陣列，引此空間複雜度為$\theta(n)$
+
+#### python code(divide and conquer):
+*    1.申請空間，使其大小為兩個已經排序序列之和，該空間用來存放合併後的序列
+*    2.設定兩個指標，最初位置分別為兩個已經排序序列的起始位置
+*    3.比較兩個指標所指向的元素，選擇相對小的元素放入到合併空間，並移動指標到下一位置
+*    4.重複步驟3直到某一指標到達序列尾
+*    5.將另一序列剩下的所有元素直接複製到合併序列尾
+```python=
+def merge_sort(array):
+    if len(array)>1:
+        #find the division point
+        mid=len(array)//2
+        left_array=array[:mid]
+        right_array=array[mid:]
+
+        #use recursion to keep dividing
+        merge_sort(left_array)
+        merge_sort(right_array)
+
+        #initialize the comparison index
+        right_index=0
+        left_index=0
+        merge_index=0
+
+        #start comparing
+        #case 1: right array compare with left array
+        while right_index<len(right_array) and left_index<len(left_array):
+            if right_array[right_index]<left_array[left_index]:
+                array[merge_index]=right_array[right_index]
+                right_index+=1
+            else:
+                array[merge_index]=left_array[left_index]
+                left_index+=1
+            merge_index+=1
+        
+        #case 2: right array compare with itself
+        while right_index<len(right_array):
+            array[merge_index]=right_array[right_index]
+            right_index+=1
+            merge_index+=1
+        
+        #case 3: left array compare with itself
+        while left_index<len(left_array):
+            array[merge_index]=left_array[left_index]
+            left_index+=1
+            merge_index+=1
+    return array
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/merge_sort.py

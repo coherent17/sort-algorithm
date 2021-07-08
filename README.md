@@ -32,7 +32,7 @@ Find constant $c$ and $n_0$: $(n_0,c)=(0,10)$
 *    插入排序法(insertion sort)
 *    希爾排序法(shell sort)
 *    合併排序法(merge sort)
-*    快速排序法
+*    快速排序法(quick sort)
 *    基數排序法
 ### **氣泡排序法(Bubble Sort)**
 #### 從第一個元素開始，比較相鄰元素大小，如果順序有誤，則對調再進行下一個元素的比較。掃描過一次後就可以確保最後一個元素是位於正確的位置。接著再進行第二次掃描，直到所有元素完成排序為止。
@@ -393,9 +393,62 @@ def shell_sort(array,gap):
             array[j]=temp
     return array
 ```
-code:https://github.com/coherent17/algorithm/blob/main/sorting/shell_sort.py
+code:https://github.com/coherent17/algorithm/blob/main/sorting/shell_sort.py  
 
+#### C code:
+```c=1
+#include <stdio.h>
+#define SIZE 15
+
+void shellSort(int *, int *);
+void printArray(int *);
+
+int main(){
+	int data[SIZE]={45,84,77,83,55,49,91,64,91,5,37,31,70,38,51};
+	//define gap by yourself
+	int gap[3]={5,2,1};
+	shellSort(data,gap);
+	printArray(data);
+	return 0;
+}
+
+void shellSort(int *array, int *gap){
+	int i,j,k,current_gap,temp;
+	for(i=0;i<3;i++){
+		current_gap=gap[i];
+		for(j=current_gap;j<SIZE;j++){
+			temp=array[j];
+			k=j;
+			while(k>=0&&k-current_gap>=0&&array[k-current_gap]>temp){
+				array[k]=array[k-current_gap];
+				k-=current_gap;
+			}
+			array[k]=temp;
+		}
+	}
+}
+
+void swap(int *a, int *b){
+	int temp;
+	temp=*a;
+	*a=*b;
+	*b=temp;
+}
+
+void printArray(int *array){
+	int i;
+	for(i=0;i<SIZE;i++){
+		printf("%d ",array[i]);
+	}
+}
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/shellsort.c
 ### **合併排序法(Merge Sort)**
+#### 分治法(Divide-and-conquer):  
+在進入合併排序法前，我們先來看看分治法:把一個複雜的問題分成兩個或更多的相同或相似的子問題，直到最後子問題可以簡單的直接求解，原問題的解即子問題的解的合併。
+![](https://i.imgur.com/RF0qWwa.jpg)
+在紙房子(一)第11集中，教授有預期警方會透過這種分治法去一一擊破夥伴們的心理，因此有事先想好應對的策略!
+
 #### 合併排序法大致上可以分為切分與排序
 *    切分:  
         *    1.將原陣列切一半成兩個子陣列
@@ -408,7 +461,7 @@ code:https://github.com/coherent17/algorithm/blob/main/sorting/shell_sort.py
 
 #### 舉例說明:  
 *    ![image alt](https://miro.medium.com/max/600/1*opwN0BhtH4zvPF697fPlow.gif)  
-*    因為兩個子陣列在合併前是已經排序好的狀態，因此在合併兩個已排序吼的陣列，我們僅需持續比較最前面最小的部分，再將較小的丟到新的大陣列即可，便可以完成排序。
+*    因為兩個子陣列在合併前是已經排序好的狀態，因此在合併兩個已排序後的陣列，我們僅需持續比較最前面最小的部分，再將較小的丟到新的大陣列即可，便可以完成排序。
 
 #### 時間複雜度:
 *    切分:
@@ -468,7 +521,81 @@ def merge_sort(array):
             merge_index+=1
     return array
 ```
-code:https://github.com/coherent17/algorithm/blob/main/sorting/merge_sort.py
+code:https://github.com/coherent17/algorithm/blob/main/sorting/merge_sort.py  
+
+#### C code:
+```c=
+#include <stdio.h>
+#define SIZE 8 
+
+void mergeSort(int *, int *, int, int);
+void printArray(int *);
+
+int main(){
+	int data[SIZE]={5,3,8,6,2,7,1,4};
+	int reg[SIZE]={0};
+	mergeSort(data,reg,0,SIZE-1);
+	printArray(data);
+	return 0;
+}
+
+void mergeSort(int *array, int *reg, int front, int end){
+	int mid;	
+	if(front<end){
+		mid=(front+end)/2;
+		//left sub-array:array[front,...,mid]
+		//right sub-array:array[mid+1,...,end]
+		mergeSort(array,reg,front,mid);
+		mergeSort(array,reg,mid+1,end);
+		
+		//initialize the comparison pointer
+		int left_pointer=front;
+		int right_pointer=mid+1;
+		
+		//loop counter
+		int i;
+		
+		for(i=front;i<=end;i++){
+			//limit of the left pointer
+			if(left_pointer==mid+1){
+				reg[i]=array[right_pointer];
+				right_pointer+=1;
+			}
+			
+			//limit of the right pointer
+			else if(right_pointer==end+1){
+				reg[i]=array[left_pointer];
+				left_pointer+=1;
+			}
+			
+			//the element of the left sub-array is smaller than right sub-array
+			else if(array[left_pointer]<array[right_pointer]){
+				reg[i]=array[left_pointer];
+				left_pointer+=1;
+			}
+			
+			//the element of the right sub-array is smaller than left sub-array
+			else{
+				reg[i]=array[right_pointer];
+				right_pointer+=1;
+			}
+		}
+		
+		//copy the element from register to array
+		for(i=front;i<=end;i++){
+			array[i]=reg[i];
+		}
+	}
+}
+
+void printArray(int *array){
+	int i;
+	for(i=0;i<SIZE;i++){
+		printf("%d ",array[i]);
+	}
+}
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/mergesort.c
 
 ### **快速排序法(Quick Sort)**
 #### 找到一個基準點(pivot)，將比這個基準點小的元素放至左邊的子陣列，將比這個基準點大的元素放到右邊的子陣列，如此一來便能確定這個基準點的位置會是最終排序過後正確的位置，再對左邊的子陣列與右邊的子陣列重複進行相同的步驟，便能完成排序。

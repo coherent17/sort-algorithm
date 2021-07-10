@@ -27,13 +27,13 @@ Find constant $c$ and $n_0$: $(n_0,c)=(0,10)$
 
 
 ## 排序演算法
-*    氣泡排序法(bubble sort)
-*    選擇排序法(selection sort)
-*    插入排序法(insertion sort)
-*    希爾排序法(shell sort)
-*    合併排序法(merge sort)
-*    快速排序法(quick sort)
-*    基數排序法
+*    氣泡排序法(Bubble sort)
+*    選擇排序法(Selection sort)
+*    插入排序法(Insertion sort)
+*    希爾排序法(Shell sort)
+*    合併排序法(Merge sort)
+*    快速排序法(Quick sort)
+*    基數排序法(Radix sort)
 ### **氣泡排序法(Bubble Sort)**
 #### 從第一個元素開始，比較相鄰元素大小，如果順序有誤，則對調再進行下一個元素的比較。掃描過一次後就可以確保最後一個元素是位於正確的位置。接著再進行第二次掃描，直到所有元素完成排序為止。
 ![image alt](https://miro.medium.com/max/901/1*PlGu04ObXCSpTvJOZTOYIw.png)
@@ -315,6 +315,8 @@ void printArray(int *array){
 	}
 }
 ```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/insertionsort.c  
+
 說明:以$array=[5,2,4,6,1,3]$為例。  
 *    當$i=1\cap j=0$時，我們將$2$這張牌抽出並決定要插在哪裡。此時因為$array[i]<array[j]$，因此將$5$往右挪一格$(array[j+1]=array[j])$，再將比較的值$(array[i])$插入挪出來的位置。此時數列會變成$array=[2,5,4,6,1,3]$
 *    當$i=2\cap j=1$時，我們將$4$這張牌抽出並決定要插在哪裡。此時因為$array[i]<array[j]$，因此我們再把$5$往右移一格，將$4$插入挪出來的空格，此時數列會變成$array=[2,4,5,6,1,3]$
@@ -726,4 +728,129 @@ def partition(array,left,right):
 quicksort(data,0,len(data)-1)
 print(data)
 ```
-code:https://github.com/coherent17/algorithm/blob/main/sorting/quicksort.py
+code:https://github.com/coherent17/algorithm/blob/main/sorting/quicksort.py  
+
+#### C code:
+```c=
+#include <stdio.h>
+#define SIZE 8
+
+void swap(int *, int *);
+int partition(int *, int, int);
+void quickSort(int *, int, int);
+void printArray(int *);
+
+int main(){
+	int data[SIZE]={22,11,88,66,55,77,33,44};
+	quickSort(data,0,SIZE-1);
+	printArray(data);
+	return 0;
+}
+
+void quickSort(int *array, int left, int right){
+	if(left<right){
+		int partition_pos;
+		partition_pos=partition(array,left,right);
+		quickSort(array,left,partition_pos-1);
+		quickSort(array,partition_pos+1,right);
+	}
+} 
+
+int partition(int *array, int left, int right){
+	int i,j,pivot;
+	i=left;
+	j=right;
+	pivot=array[right];
+	
+	while(i<j){
+		//i move to right
+		while(i<right&&array[i]<pivot){
+			i++;
+		}
+		//j move to left
+		while(j>left&&array[j]>pivot){
+			j--;
+		}
+		//swap the element of the index i and j
+		if(i<j){
+			swap(&array[i],&array[j]);
+		}
+	}
+	//swap the element of the index i and p
+	if(array[i]>pivot){
+		swap(&array[i],&array[right]);
+	}
+	return i;
+}
+
+void swap(int *a, int *b){
+	int temp;
+	temp=*a;
+	*a=*b;
+	*b=temp;
+}
+
+void printArray(int *array){
+	int i;
+	for(i=0;i<SIZE;i++){
+		printf("%d ",array[i]);
+	}
+}
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/quicksort.c
+
+### **基數排序法(Radix Sort)**
+#### 為一種分配式的排序法(distribution sort)，可以分成LSD或MSD，在不同的情形可以使用不同的方式，使其達到最高效率。在做基數排序法的時候會用到桶子，存放陣列的值。
+
+#### 舉例說明:  
+以LSD(least significant digit)為例子:  
+
+給定義下陣列:
+| 73  | 22  | 93  | 43  | 55  | 14  | 28  | 65  | 39  | 81  |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |:---:|
+
+**Step 1:**  
+在經過這些數值時，依據個位數的大小將其分配到0~9的桶子內，並遵守下面的規則:  
+*    1.數值存放時要從桶子的底部開始。
+*    2.一旦有其中一個桶子放到第$n$層，其餘桶子在分配時也需要從第$n$層開始放。
+        *    ex:73的個位數字為3，將其放到3號桶子的最底部。
+        *    ex:22的個位數字為2，將其放到2號桶子的最底部。
+        *    ex:93的個位數字為3，將其放到3號桶子，但是下面已經有放置73，因此放到第二層。
+        *    ex:43的個位數字為3，將其放到3號桶子，但是下面已經有放置73和93，因此放到第三層。
+        *    ex:55的個位數字為5，但是因3號桶子已經放到第三層，因此將其放到5號桶子的第三層。  
+    
+按照以上規則，將陣列的所有數值依據個位數排序好之後可以獲得:  
+
+| 0   |  1  |  2  |  3  | 4   |  5  | 6   | 7   |  8  |  9  |
+| --- |:---:|:---:|:---:| --- |:---:| --- | --- |:---:|:---:|
+|     | 81  |     |     |     | 65  |     |     |     | 39  |
+|     |     |     | 43  | 14  | 55  |     |     | 28  |     |
+|     |     |     | 93  |     |     |     |     |     |     |
+|     |     | 22  | 73  |     |     |     |     |     |     |
+
+**Step 2:**  
+將剛剛依據個位數放進桶子的數值串接起來，並遵守下面的規則:  
+*    1.由編號0的桶子取到編號9的桶子。
+*    2.同一個桶子內，先取放置在底部的。
+
+由以上規則，我們所得到的陣列為:  
+| 81  | 22  | 73  | 93  | 43  | 14  | 55  | 65  | 28  | 39  |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |:---:|
+
+**Step 3:**  
+重複Step 1，不過改成對十位數進行分配:  
+按照以上規則，將陣列的所有數值依據十位數排序好之後可以獲得:  
+
+| 0   |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |
+| --- |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|     |     | 28  | 39  |     |     |     |     |     |     |
+|     | 14  | 22  |     | 43  | 55  | 65  | 73  | 81  | 93  |
+
+**Step 4:**  
+重複Step 2，將其串接在一起，便完成了排序:  
+| 14  | 22  | 28  | 39  | 43  | 55  | 65  | 73  | 81  | 93  |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |:---:|
+
+要進行幾次的分配及串接是取決於這些數值中最大位數的那個數字有幾位。
+
+LSD的radix sort適用於位數較少的數列，然而在運算數值較大的陣列則是MSD的radix sort效率會比較高。

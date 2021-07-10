@@ -37,18 +37,22 @@ void radixSort(int *array){
 			bucket[(array[i]/significantDigit)%10]++;
 		}
 		
+		//use prefix sum to determine where to put the number 
 		for(i=1;i<10;i++){
 			bucket[i]+=bucket[i-1];
 		}
 		
 		for(i=SIZE-1;i>=0;i--){
-			temp_array[--bucket[(array[i]/significantDigit)%10]]=array[i];
+			int digitNumber=(array[i]/significantDigit)%10;
+			//need to -1 because the prefix sum include itself
+			temp_array[--bucket[digitNumber]]=array[i];
 		}
 		
 		//copy the array
 		for(i=0;i<SIZE;i++){
 			array[i]=temp_array[i];
 		}
+		
 		//move to the next significantDigit number
 		significantDigit*=10;
 	}

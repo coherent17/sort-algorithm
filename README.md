@@ -34,6 +34,7 @@ Find constant $c$ and $n_0$: $(n_0,c)=(0,10)$
 *    合併排序法(Merge sort)
 *    快速排序法(Quick sort)
 *    基數排序法(Radix sort)
+*    堆積排序法(Heap sort)
 ### **氣泡排序法(Bubble Sort)**
 #### 從第一個元素開始，比較相鄰元素大小，如果順序有誤，則對調再進行下一個元素的比較。掃描過一次後就可以確保最後一個元素是位於正確的位置。接著再進行第二次掃描，直到所有元素完成排序為止。
 ![image alt](https://miro.medium.com/max/901/1*PlGu04ObXCSpTvJOZTOYIw.png)
@@ -855,6 +856,47 @@ code:https://github.com/coherent17/algorithm/blob/main/sorting/quicksort.c
 
 LSD的radix sort適用於位數較少的數列，然而在運算數值較大的陣列則是MSD的radix sort效率會比較高。
 
+#### python code:  
+```python=
+def getMax(array):
+    max=array[0]
+    for i in range(1,len(data)):
+        if array[i]>max:
+            max=array[i]
+    return max
+
+def radixSort(array):
+    temp_array=[0]*len(array)
+    significantDigit=1
+    largestNum=getMax(array)
+
+    while largestNum/significantDigit>0:
+        bucket=[0]*10
+
+        # count how many number put into each bucket
+        for i in range(len(array)):
+            bucket[int(array[i]/significantDigit)%10]+=1
+
+        # use prefix sum to determine where to put the number 
+        for i in range(1,9+1):
+            bucket[i]+=bucket[i-1]
+
+        
+        for i in range(len(array)-1,-1,-1):
+            digitNumber=int(array[i]/significantDigit)%10
+            # need to -1 because the prefix sum include itself
+            bucket[digitNumber]-=1
+            temp_array[bucket[digitNumber]]=array[i]
+
+        # copy the array
+        for i in range(len(array)):
+            array[i]=temp_array[i]
+
+        significantDigit*=10
+    return array
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/radixort.py
+
 #### C code:  
 ```c=
 #include <stdio.h>
@@ -925,3 +967,7 @@ void printArray(int *array){
 } 
 ```
 code:https://github.com/coherent17/algorithm/blob/main/sorting/radixsort.c
+*    解釋程式碼:  
+        *    因為在上面radix sort的解釋中，可以看到若是用二維陣列去存這些數值，其實會浪費許多空間，不如我們可以使用前綴和的技巧，便能成功定位出該數值在串接時應該要被放置的位置，且節省許多不必要空間的使用。
+
+### **推積排序法(Heap Sort)**

@@ -30,19 +30,16 @@ void swap(int *a, int *b){
 }
 
 void heapify(int *array, int size, int i){
-    if(size==1) printf("Single element in the heap\n");
-    else{
-        int largest=i;
-        int left_children=2*i+1;
-        int right_children=2*i+2;
+    int largest=i;
+    int left_children=2*i+1;
+    int right_children=2*i+2;
 
-        if(left_children<size && array[left_children]>array[largest]) largest=left_children;
-        if(right_children<size && array[right_children]>array[largest]) largest=right_children;
-        //check need to swap or not?
-        if(largest!=i){
-            swap(&array[i],&array[largest]);
-            heapify(array,size,largest);
-        }
+    if(left_children<size && array[left_children]>array[largest]) largest=left_children;
+    if(right_children<size && array[right_children]>array[largest]) largest=right_children;
+    //check need to swap or not?
+    if(largest!=i){
+        swap(&array[i],&array[largest]);
+        heapify(array,size,largest);
     }
 }
 
@@ -52,6 +49,7 @@ void insert(int *array, int newNumber){
     //loop to heapify
     int i;
     for(i=size/2-1;i>=0;i--){
+        //i is the index of the parent node
         heapify(array, size, i);
     }
 }
@@ -76,4 +74,5 @@ void printArray(int *array,int size){
 	for(i=0;i<size;i++){
 		printf("%d ",array[i]);
 	}
+    printf("\n");
 }

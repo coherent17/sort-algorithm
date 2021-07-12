@@ -1,4 +1,5 @@
-# **Algorithm 演算法筆記**
+# **Algorithm 演算法排序筆記**
+**[此筆記的原始碼](https://hackmd.io/vopCr9NXTlC4x3DQbWyR2A?both)**
 ---
 ## 時間複雜度(Time complexity) $O(f(n))$  
 定義$T(n)$表示程式執行所要花費的時間，$n$代表資料輸入量。  
@@ -855,6 +856,10 @@ code:https://github.com/coherent17/algorithm/blob/main/sorting/quicksort.c
 要進行幾次的分配及串接是取決於這些數值中最大位數的那個數字有幾位。
 
 LSD的radix sort適用於位數較少的數列，然而在運算數值較大的陣列則是MSD的radix sort效率會比較高。
+#### 時間複雜度:
+定義$n$為陣列長度，而$k$為此陣列最大數字的位數。
+*    Best Case: $O(nk)$  
+*    Worst Case: $O(nk)$  
 
 #### python code:  
 ```python=
@@ -971,3 +976,213 @@ code:https://github.com/coherent17/algorithm/blob/main/sorting/radixsort.c
         *    因為在上面radix sort的解釋中，可以看到若是用二維陣列去存這些數值，其實會浪費許多空間，不如我們可以使用前綴和的技巧，便能成功定位出該數值在串接時應該要被放置的位置，且節省許多不必要空間的使用。
 
 ### **推積排序法(Heap Sort)**
+在了解堆積排序法前，需要先知道:
+*    1.complete binary tree(完全二元樹)
+*    2.heap data structure(堆積)
+
+#### complete binary tree(完全二元樹):
+*    樹的概念:  
+![image alt](https://web.ntnu.edu.tw/~algo/BinaryTree1.png)  
+*    二元樹的分類:  
+![image alt](https://web.ntnu.edu.tw/~algo/BinaryTree2.png)  
+        *    full binary tree:除了最底層的樹葉以外，其餘節點都有兩個小孩。 
+        *    complete binary tree:各層節點全滿，除了最後一層，最後一層節點全部靠左。
+        *    perfect binary tree:各層節點全滿，每個節點都有兩個小孩。
+
+#### heap data structure(堆積):
+*    heap property:
+        *    1.max heap(最大堆積):所有節點的小孩都比其小，根部為最大值。  
+        example:  
+        ![image alt](https://cdn.programiz.com/cdn/farfuture/OTLuUbQZmYPjHkXgmCfzHr8nNCkoi2Je9y9ZzIl1vuI/mtime:1582112622/sites/tutorial2program/files/maxheap_1.png)
+        *    2.min heap(最小堆積):所有節點的小孩都比其大，根部為最小值。  
+        example:  
+        ![image alt](https://cdn.programiz.com/cdn/farfuture/tVzREVaraXbOKPPJtMbcQ10N2QkxiAJcNOIfxPYlVR0/mtime:1582112622/sites/tutorial2program/files/minheap_0.png)
+*    Heapify(堆積化):將二元樹化為最大堆積或是最小堆積的過程。  
+        *    給定陣列(n=6):  
+                | 0   | 1   |  2  | 3   | 4   |  5  |
+                | --- | --- |:---:| --- | --- |:---:|
+                | 3   | 9   |  2  | 1   | 4   |  5  |
+        *    建立complete binary tree:  
+                ![image alt](https://cdn.programiz.com/cdn/farfuture/lnR3gOMRgb2thamLGxVMsWt91B0Wl7ffnwmoznqFr-U/mtime:1582112622/sites/tutorial2program/files/completebt-1_0.png)  
+        *    從第一個非葉子的節點開始，index為$i=n/2-1=2$，將其設為當前最大值，然後去比較左小孩(index為$2i+1$)及右小孩(index為$2i+2$)，若左小孩或右小孩比當前最大值為大，則將其設為當前最大值，並將其與此時index為$i$的元素交換，持續重複此步驟，直到所有子樹都被堆積完成。  
+*    在二元樹中加入新的元素:  
+        *    將此元素加在二元樹的末端，再做heapify。
+*    在二元樹中刪除元素:  
+        *    將欲刪除的元素移至樹的末端，刪除後再做heapify。
+
+#### C code for max heap data structure:  
+```c=
+#include <stdio.h>
+
+void swap(int *, int *);
+void heapify(int *, int, int);
+void insert(int *, int);
+void delete(int *, int);
+void printArray(int *, int);
+
+//global variable
+int size=0;
+
+int main(){
+    int array[10];
+    insert(array,3);
+    insert(array,4);
+    insert(array,9);
+    insert(array,5);
+    insert(array,2);
+    printArray(array,size);
+    delete(array,9);
+    printArray(array,size);
+    return 0;
+}
+
+void swap(int *a, int *b){
+    int temp;
+    temp=*a;
+    *a=*b;
+    *b=temp;
+}
+
+void heapify(int *array, int size, int i){
+    int largest=i;
+    int left_children=2*i+1;
+    int right_children=2*i+2;
+
+    if(left_children<size && array[left_children]>array[largest]) largest=left_children;
+    if(right_children<size && array[right_children]>array[largest]) largest=right_children;
+    //check need to swap or not?
+    if(largest!=i){
+        swap(&array[i],&array[largest]);
+        heapify(array,size,largest);
+    }
+}
+
+void insert(int *array, int newNumber){
+    array[size]=newNumber;
+    size+=1;
+    //loop to heapify
+    int i;
+    for(i=size/2-1;i>=0;i--){
+        //i is the index of the parent node
+        heapify(array, size, i);
+    }
+}
+
+void delete(int *array, int delNumber){
+    //find the index of the number to delete
+    int i;
+    for(i=0;i<size;i++){
+        if(array[i]==delNumber) break;
+    }
+    //swap to the end of the binary tree
+    swap(&array[i],&array[size-1]);
+    size-=1;
+    //loop to heapify
+    for(i=size/2-1;i>=0;i--){
+        heapify(array, size, i);
+    }
+}
+
+void printArray(int *array,int size){
+	int i;
+	for(i=0;i<size;i++){
+		printf("%d ",array[i]);
+	}
+    printf("\n");
+}
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/max_heap_data_structure.c
+#### Heap sort實踐方法:
+那要如何透過堆積的排序數列呢?我們可以將每次heapify後的binary tree的最大值(根部root)，將其與樹的末端交換，也就是將其放到陣列的最後一個位置，之後刪除其在binary tree中的位置，再繼續進行相同的動作便可以將此數列排序完畢。
+
+##### python code:
+```python=
+def heapify(array,size,i):
+    largest=i
+    left_children=2*i+1
+    right_children=2*i+2
+
+    if left_children<size and array[left_children]>array[largest]:
+        largest=left_children
+    if right_children<size and array[right_children]>array[largest]:
+        largest=right_children
+    
+    # //check need to swap or not?
+    if largest!=i:
+        array[i],array[largest]=array[largest],array[i]
+        heapify(array,size,largest)
+
+def heapSort(array):
+    # construct max heap:
+    n=len(array)
+    for i in range(n//2,-1,-1):
+        heapify(array,n,i)
+    
+    # swap the root(index=0) to the end of the array and delete it
+    for i in range(n-1,0,-1):
+        array[i],array[0]=array[0],array[i]
+        #heapify root element:
+        heapify(array,i,0)
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/heapsort.py
+##### C code:
+```c=
+#include <stdio.h>
+#define SIZE 8
+
+void swap(int *, int *);
+void heapify(int *, int, int);
+void heapSort(int *, int);
+void printArray(int *);
+
+int main(){
+    int data[SIZE]={16,25,39,27,12,8,45,63};
+    heapSort(data,SIZE);
+    printArray(data);
+    return 0;
+}
+void swap(int *a, int *b){
+    int temp;
+    temp=*a;
+    *a=*b;
+    *b=temp;
+}
+
+void heapify(int *array, int size, int i){
+    int largest=i;
+    int left_children=2*i+1;
+    int right_children=2*i+2;
+
+    if(left_children<size && array[left_children]>array[largest]) largest=left_children;
+    if(right_children<size && array[right_children]>array[largest]) largest=right_children;
+    //check need to swap or not?
+    if(largest!=i){
+        swap(&array[i],&array[largest]);
+        heapify(array,size,largest);
+    }
+}
+
+void heapSort(int *array, int size){
+    //construct max heap:
+    int i;
+    for(i=size/2-1;i>=0;i--){
+        heapify(array, size, i);
+    }
+
+    //swap the root(index=0) to the end of the array and delete it
+    for(i=size-1;i>=0;i--){
+        swap(&array[0],&array[i]);
+        //heapify again to get the maxheap
+        heapify(array,i,0);
+    }
+}
+
+void printArray(int *array){
+	int i;
+	for(i=0;i<SIZE;i++){
+		printf("%d ",array[i]);
+	}
+    printf("\n");
+}
+```
+code:https://github.com/coherent17/algorithm/blob/main/sorting/heapsort.c

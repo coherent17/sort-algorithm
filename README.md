@@ -1095,6 +1095,11 @@ code:https://github.com/coherent17/algorithm/blob/main/sorting/max_heap_data_str
 #### Heap sort實踐方法:
 那要如何透過堆積的排序數列呢?我們可以將每次heapify後的binary tree的最大值(根部root)，將其與樹的末端交換，也就是將其放到陣列的最後一個位置，之後刪除其在binary tree中的位置，再繼續進行相同的動作便可以將此數列排序完畢。
 
+#### 時間複雜度:
+*    Best case:$O(nlogn)$
+*    Worst case:$O(nlogn)$
+*    Average case:$O(nlogn)$
+
 ##### python code:
 ```python=
 def heapify(array,size,i):
